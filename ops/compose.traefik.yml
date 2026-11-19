@@ -1,0 +1,72 @@
+# Managed GlitchTip — tenant demo en errors.example.com (detras del Traefik de Coolify)
+# Deploy: docker compose -p gt-glitch up -d   (en /root/managed-glitchtip del server)
+x-env: &default-env
+  SECRET_KEY: "change-me-CHANGE-THIS"
+  DATABASE_URL: "postgres://postgres:postgres@gt-glitch-pg:5432/glitchtip"
+  REDIS_URL: "redis://gt-glitch-redis:6379/0"
+  EMAIL_URL: "consolemail://"
+  GLITCHTIP_DOMAIN: "https://errors.example.com"
+  DEFAULT_FROM_EMAIL: "noreply@errors.example.com"
+  CELERY_WORKER_AUTOSCALE: "1,2"
+  GLITCHTIP_MAX_EVENT_LIFE_DAYS: "90"
+
+services:
+  gt-glitch-pg:
+    image: postgres:16
+    container_name: gt-glitch-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: glitchtip
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - gt-glitch-pgdata:/var/lib/postgresql/data
+    networks: [internal]
+
+  gt-glitch-redis:
+    image: valkey/valkey:8-alpine
+    container_name: gt-glitch-redis
+    restart: unless-stopped
+    networks: [internal]
+
+  gt-glitch-web:
+    image: glitchtip/glitchtip:latest
+    container_name: gt-glitch-web
+    command: ./bin/run-web.sh
+    restart: unless-stopped
+    depends_on: [gt-glitch-pg, gt-glitch-redis]
+    environment: *default-env
+    networks: [internal, coolify]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=coolify
+      - traefik.http.middlewares.gzip.compress=true
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+      - traefik.http.routers.http-glitch.entryPoints=http
+      - traefik.http.routers.http-glitch.middlewares=redirect-to-https
+      - traefik.http.routers.http-glitch.rule=Host(`errors.example.com`) && PathPrefix(`/`)
+      - traefik.http.routers.http-glitch.service=glitch
+      - traefik.http.routers.https-glitch.entryPoints=https
+      - traefik.http.routers.https-glitch.middlewares=gzip
+      - traefik.http.routers.https-glitch.rule=Host(`errors.example.com`) && PathPrefix(`/`)
+      - traefik.http.routers.https-glitch.service=glitch
+      - traefik.http.routers.https-glitch.tls=true
+      - traefik.http.routers.https-glitch.tls.certresolver=letsencrypt
+      - traefik.http.services.glitch.loadbalancer.server.port=8000
+
+  gt-glitch-migrate:
+    image: glitchtip/glitchtip:latest
+    container_name: gt-glitch-migrate
+    command: ./bin/run-migrate.sh
+    depends_on: [gt-glitch-pg, gt-glitch-redis]
+    environment: *default-env
+    networks: [internal]
+    restart: on-failure
+
+volumes:
+  gt-glitch-pgdata:
+
+networks:
+  internal:
+  coolify:
+    external: true

@@ -1,0 +1,48 @@
+# QND: 1 tenant de GlitchTip. Secrets hardcodeados. Copiá este archivo por cliente y cambiá PORT + nombre.
+# Levantar:  TENANT=acme PORT=8001 docker compose -p gt-acme up -d
+# Ver:       http://localhost:8001  (crea tu user admin en el primer login)
+x-env: &default-env
+  SECRET_KEY: "qnd-hardcoded-change-me-${TENANT:-demo}"
+  DATABASE_URL: "postgres://postgres:postgres@pg:5432/glitchtip"
+  REDIS_URL: "redis://redis:6379/0"
+  EMAIL_URL: "consolemail://"            # QND: emails van al log, no manda nada real
+  GLITCHTIP_DOMAIN: "http://localhost:${PORT:-8000}"
+  DEFAULT_FROM_EMAIL: "noreply@${TENANT:-demo}.local"
+  CELERY_WORKER_AUTOSCALE: "1,1"
+
+services:
+  pg:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: glitchtip
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: valkey/valkey:8-alpine
+
+  web:
+    image: glitchtip/glitchtip:latest
+    command: ./bin/run-web.sh
+    depends_on: [pg, redis]
+    ports:
+      - "${PORT:-8000}:8000"
+    environment: *default-env
+
+  worker:
+    image: glitchtip/glitchtip:latest
+    command: ./bin/run-worker.sh
+    depends_on: [pg, redis]
+    environment: *default-env
+
+  migrate:
+    image: glitchtip/glitchtip:latest
+    command: ./bin/run-migrate.sh
+    depends_on: [pg, redis]
+    environment: *default-env
+    restart: on-failure
+
+volumes:
+  pgdata:

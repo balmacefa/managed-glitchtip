@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HostedGlitch — Managed error tracking, without the babysitting</title>
+<style>
+  :root{--bg:#0d1117;--card:#161b22;--ink:#e6edf3;--mut:#8b949e;--acc:#7c5cff;--ok:#2ea043}
+  *{box-sizing:border-box} body{margin:0;font:16px/1.6 -apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:860px;margin:0 auto;padding:64px 20px}
+  h1{font-size:44px;line-height:1.1;margin:0 0 16px} h1 span{color:var(--acc)}
+  .sub{font-size:20px;color:var(--mut);margin:0 0 32px}
+  .cta{display:inline-block;background:var(--acc);color:#fff;padding:14px 28px;border-radius:10px;text-decoration:none;font-weight:600}
+  .cta.ghost{background:transparent;border:1px solid #30363d;color:var(--ink);margin-left:10px}
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:48px 0}
+  .card{background:var(--card);border:1px solid #30363d;border-radius:12px;padding:20px}
+  .card h3{margin:0 0 8px;font-size:17px} .card p{margin:0;color:var(--mut);font-size:14px}
+  .price{display:flex;gap:16px;margin:40px 0}
+  .plan{flex:1;background:var(--card);border:1px solid #30363d;border-radius:12px;padding:24px;text-align:center}
+  .plan.pop{border-color:var(--acc)}
+  .plan .n{font-size:34px;font-weight:700} .plan .n small{font-size:14px;color:var(--mut)}
+  .chk{color:var(--ok)}
+  footer{color:var(--mut);font-size:13px;margin-top:48px;border-top:1px solid #30363d;padding-top:20px}
+  .promise{background:#1b2430;border-left:3px solid var(--acc);padding:16px 20px;border-radius:8px;margin:32px 0;color:#c9d1d9}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Sentry-grade error tracking.<br><span>Zero DevOps.</span></h1>
+  <p class="sub">We run <b>GlitchTip</b> on our infra. You get your own isolated instance, drop in your existing Sentry SDK, and never touch a Dockerfile again.</p>
+  <!-- QND: reemplazá por tu Payment Link real de Stripe -->
+  <a class="cta" href="https://buy.stripe.com/REEMPLAZAR">Reserve my instance — $19/mo</a>
+  <a class="cta ghost" href="#how">How it works</a>
+
+  <div class="promise">
+    <b>Our honest promise:</b> we don't sell you a 99.99% SLA. We sell you something better for a side-project or internal tool:
+    your data is <b>isolated, backed up daily, and never lost</b> — and <b>we handle every update</b>. You just ship code.
+  </div>
+
+  <div class="grid" id="how">
+    <div class="card"><h3>1. Swap your DSN</h3><p>Uses the official Sentry SDKs. Change one URL. Done.</p></div>
+    <div class="card"><h3>2. We host &amp; patch</h3><p>Your own isolated GlitchTip. Updates, backups, SSL — on us.</p></div>
+    <div class="card"><h3>3. Own your data</h3><p>Export anytime. No lock-in. Migrate to Sentry later if you want.</p></div>
+  </div>
+
+  <div class="price">
+    <div class="plan"><div class="n">$19<small>/mo</small></div><p>Solo</p><p class="chk">✓ 1 project · 10k events/mo</p></div>
+    <div class="plan pop"><div class="n">$39<small>/mo</small></div><p>Team</p><p class="chk">✓ Unlimited projects · 100k events/mo</p></div>
+    <div class="plan"><div class="n">$79<small>/mo</small></div><p>Scale</p><p class="chk">✓ 1M events · priority updates</p></div>
+  </div>
+  <a class="cta" href="https://buy.stripe.com/REEMPLAZAR">Reserve my instance →</a>
+
+  <footer>
+    Best-effort availability, no SLA. Daily backups, isolated tenants, data export on request.
+    GlitchTip is open-source (MIT); we provide managed hosting. Not affiliated with Sentry.<br>
+    HostedGlitch · hello@hostedglitch.dev
+  </footer>
+</div>
+</body>
+</html>
